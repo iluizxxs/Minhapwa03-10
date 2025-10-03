@@ -4,14 +4,35 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "serve": "serve .",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "npm:rolldown-vite@7.1.14"
+    "vite": "7.1.9",
+    "workbox-cacheable-response": "7.0.0",
+    "workbox-expiration": "7.0.0",
+    "workbox-recipes": "7.0.0",
+    "workbox-routing": "7.0.0",
+    "workbox-strategies": "7.0.0",
+    "workbox-streams": "7.0.0"
   },
-  "overrides": {
-    "vite": "npm:rolldown-vite@7.1.14"
+
+  "description": "",
+  "index.html": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iluizxxs/Minhapwa03-10.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iluizxxs/Minhapwa03-10/issues"
+  },
+  "homepage": "https://github.com/iluizxxs/Minhapwa03-10#readme",
+  "dependencies": {
+    "serve": "^14.2.5"
   }
 }
