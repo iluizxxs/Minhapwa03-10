@@ -1,18 +1,64 @@
-let cacheName = "my-first-pwa";
-let filesToCache = ["/", "/index.html", "/css/style.css", "/js/main.js"];
+import { offlineFallback, warmStrategyCache } from 'workbox-recipes';
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { registerRoute } from 'workbox-routing';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { ExpirationPlugin } from 'workbox-expiration';
 
-self.addEventListener("install", (e) => {
-    e.waitUntil(
-        caches.open(cacheName).then(function (cache) {
-            return cache.addAll(filesToCache);
-        })
-    );
+const pageCache = new CacheFirst({
+  cacheName: 'noticias-pwa',
+  plugins: [
+    new CacheableResponsePlugin({
+      statuses: [0, 200],
+    }),
+    new ExpirationPlugin({
+      maxAgeSeconds: 30 * 24 * 60 * 60,
+    }),
+  ],
 });
 
-self.addEventListener("fetch", (e) => {
-    e.respondWith(
-        caches.match(e.request).then((response) => {
-            return response || fetch(e.request);
-        })
-    );
+warmStrategyCache({
+  urls: [
+    '/index.html',
+    '/',
+    'https://fonts.googleapis.com/css?family=Poppins&display=swap',
+  ],
+  strategy: pageCache,
 });
+
+registerRoute(
+  ({ request }) => request.mode === 'navigate',
+  pageCache
+);
+
+registerRoute(
+  ({ request }) => ['style', 'script', 'worker'].includes(request.destination),
+  new StaleWhileRevalidate({
+    cacheName: 'asset-cache',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      1,
+    ],
+  })
+);
+
+offlineFallback({
+  pageFallback: '/offline.html',
+});
+
+const imageRoute = new Route(({ request }) => {
+  return request.destination === 'image';
+},
+  new CacheFirst({
+    cacheName: 'images',
+    plugins: [
+      new ExpirationPlugin({
+        maxAgeSeconds: 6060 * 24 * 30,
+      }),
+    ],
+  })
+);
+
+registerRoute(imageRoute);
+
